@@ -2,7 +2,7 @@
 
 Very simple inline calendar for your bot.
 
-<img src="examples/images/1.png" alt="1" style="zoom:70.6%;" /><img src="examples/images/2.png" alt="2" style="zoom:54%;" />
+<img src="https://i.gyazo.com/21d553c25481827b55174acfcf45259b.gif" style="zoom:67%;" />
 
 # Getting Started
 

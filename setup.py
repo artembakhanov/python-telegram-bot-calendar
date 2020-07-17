@@ -9,7 +9,7 @@ setup(
     author='Artem Bakhanov',
     author_email='artembakhanov@gmail.com',
     url='https://github.com/artembakhanov/python-telegram-bot-calendar',
-    download_url='https://github.com/artembakhanov/python-telegram-bot-calendar/archive/v_01.tar.gz',
+    download_url='https://github.com/artembakhanov/python-telegram-bot-calendar/archive/v_0.1.tar.gz',
     keywords=['calendar', 'telegram', 'bot', 'telegram bot'],
     install_requires=[
         'python-dateutil',
