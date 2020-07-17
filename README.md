@@ -1,11 +1,8 @@
 # python-telegram-bot-calendar
 
-[![PyPi Package Version](https://img.shields.io/pypi/v/pyTelegramBotAPI.svg)](https://pypi.python.org/pypi/pyTelegramBotAPI)
-[![Supported Python versions](https://img.shields.io/pypi/pyversions/pyTelegramBotAPI.svg)](https://pypi.python.org/pypi/pyTelegramBotAPI)
-
 Very simple inline calendar for your bot.
 
-<img src="C:\Users\artem\Code\TelegramCalendar\examples\images\1.png" alt="1" style="zoom:70.6%;" /><img src="C:\Users\artem\Code\TelegramCalendar\examples\images\2.png" alt="2" style="zoom:54%;" />
+<img src="examples/images/1.png" alt="1" style="zoom:70.6%;" /><img src="examples/images/2.png" alt="2" style="zoom:54%;" />
 
 # Getting Started
 
@@ -73,7 +70,8 @@ You can create as many calendars as you want. However, in order to handle them p
 
 ### Date ranges
 
-In the class constructor `min_date` and `max_date` - both are used as min and max values for the calendar. If you add them, the calendar will not show undesired dates. Example:<img src="\examples\images\5.png" style="zoom: 67%;" />
+In the class constructor `min_date` and `max_date` - both are used as min and max values for the calendar. If you add them, the calendar will not show undesired dates. Example:
+![3](/examples/images/5.png)
 
 ### Custom style
 
@@ -95,7 +93,7 @@ class MyStyleCalendar(DetailedTelegramCalendar):
 
 You will get:
 
- ![3](\examples\images\3.png)
+ ![4](/examples/images/3.png)
 
 ### Custom Translation
 
@@ -110,7 +108,7 @@ class MyTranslationCalendar(DetailedTelegramCalendar):
         self.months['yourtransl'] = your_translation_months
 ```
 
-![4](\examples\images\4.png)
+![5](/examples/images/4.png)
 
 # Examples
 

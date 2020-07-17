@@ -5,7 +5,7 @@ setup(
     packages=['telegram_bot_calendar'],
     version='0.1',
     license='MIT',
-    description='Python inline calendar for Telegram bots',
+    description='Python inline calendar for telegram bots',
     author='Artem Bakhanov',
     author_email='artembakhanov@gmail.com',
     url='https://github.com/artembakhanov/python-telegram-bot-calendar',
