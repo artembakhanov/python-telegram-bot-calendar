@@ -35,10 +35,9 @@ class DetailedTelegramCalendar(TelegramCalendar):
         params = dict(
             zip(["start", "calendar_id", "action", "step", "year", "month", "day"][:len(params)], params))
 
-        step = params['step']
-
         if params['action'] == NOTHING:
-            return None, None, step
+            return None, None, None
+        step = params['step']
 
         year = int(params['year'])
         month = int(params['month'])
@@ -63,7 +62,8 @@ class DetailedTelegramCalendar(TelegramCalendar):
         years = self._get_period(YEAR, start, years_num)
         years_buttons = rows(
             [
-                self._build_button(d.year if d else self.empty_year_button, SELECT if d else NOTHING, YEAR, d, is_random=True)
+                self._build_button(d.year if d else self.empty_year_button, SELECT if d else NOTHING, YEAR, d,
+                                   is_random=True)
                 for d in years
             ],
             self.size_year
@@ -103,7 +103,8 @@ class DetailedTelegramCalendar(TelegramCalendar):
 
         days_buttons = rows(
             [
-                self._build_button(d.day if d else self.empty_day_button, SELECT if d else NOTHING, DAY, d, is_random=True)
+                self._build_button(d.day if d else self.empty_day_button, SELECT if d else NOTHING, DAY, d,
+                                   is_random=True)
                 for d in days
             ],
             self.size_day

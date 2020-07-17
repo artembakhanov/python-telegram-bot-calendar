@@ -6,7 +6,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 setup(
     name='python-telegram-bot-calendar',
     packages=['telegram_bot_calendar'],
-    version='1.0.0',
+    version='1.0.1',
     license='MIT',
     description='Python inline calendar for telegram bots',
     long_description=long_description,
@@ -14,7 +14,7 @@ setup(
     author='Artem Bakhanov',
     author_email='artembakhanov@gmail.com',
     url='https://github.com/artembakhanov/python-telegram-bot-calendar',
-    download_url='https://github.com/artembakhanov/python-telegram-bot-calendar/archive/v_1.0.0.tar.gz',
+    download_url='https://github.com/artembakhanov/python-telegram-bot-calendar/archive/v_1.0.1.tar.gz',
     keywords=['calendar', 'telegram', 'bot', 'telegram bot'],
     install_requires=[
         'python-dateutil',

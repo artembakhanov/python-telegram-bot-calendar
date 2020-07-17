@@ -62,7 +62,7 @@ The function `process` return tuple of size 3 - `result`, `keyboard`, `step`.
 
 * `result` - `datetime.date` object if user finished selecting. Otherwise `None`
 * `keyboard` - inline keyboard markup if the result is not ready. Otherwise `None`
-* `step` - `YEAR`, `MONTH`,  or `DAY` if not ready.
+* `step` - `YEAR`, `MONTH`,  or `DAY` if not ready. `None` is also possible if there is no change in keyboard.
 
 # Advanced use
 
