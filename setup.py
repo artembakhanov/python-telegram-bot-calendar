@@ -1,15 +1,20 @@
-from distutils.core import setup
+from setuptools import setup
+
+with open("README.md", "r", encoding='utf-8') as fh:
+    long_description = fh.read()
 
 setup(
     name='python-telegram-bot-calendar',
     packages=['telegram_bot_calendar'],
-    version='0.1',
+    version='1.0.0',
     license='MIT',
     description='Python inline calendar for telegram bots',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author='Artem Bakhanov',
     author_email='artembakhanov@gmail.com',
     url='https://github.com/artembakhanov/python-telegram-bot-calendar',
-    download_url='https://github.com/artembakhanov/python-telegram-bot-calendar/archive/v_0.1.tar.gz',
+    download_url='https://github.com/artembakhanov/python-telegram-bot-calendar/archive/v_1.0.0.tar.gz',
     keywords=['calendar', 'telegram', 'bot', 'telegram bot'],
     install_requires=[
         'python-dateutil',

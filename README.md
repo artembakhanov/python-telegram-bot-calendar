@@ -1,5 +1,7 @@
 # python-telegram-bot-calendar
 
+[![PyPI version](https://badge.fury.io/py/python-telegram-bot-calendar.svg)](https://badge.fury.io/py/python-telegram-bot-calendar)
+
 Very simple inline calendar for your bot.
 
 <img src="https://i.gyazo.com/21d553c25481827b55174acfcf45259b.gif" style="zoom:67%;" />
@@ -71,7 +73,7 @@ You can create as many calendars as you want. However, in order to handle them p
 ### Date ranges
 
 In the class constructor `min_date` and `max_date` - both are used as min and max values for the calendar. If you add them, the calendar will not show undesired dates. Example:
-![3](/examples/images/5.png)
+<img src="https://github.com/artembakhanov/python-telegram-bot-calendar/raw/master/examples/images/5.png?raw=true" alt="3" style="zoom:67%;" />
 
 ### Custom style
 
@@ -93,7 +95,7 @@ class MyStyleCalendar(DetailedTelegramCalendar):
 
 You will get:
 
- ![4](/examples/images/3.png)
+ ![4](https://github.com/artembakhanov/python-telegram-bot-calendar/raw/master/examples/images/3.png)
 
 ### Custom Translation
 
@@ -108,7 +110,7 @@ class MyTranslationCalendar(DetailedTelegramCalendar):
         self.months['yourtransl'] = your_translation_months
 ```
 
-![5](/examples/images/4.png)
+![5](https://github.com/artembakhanov/python-telegram-bot-calendar/raw/master/examples/images/4.png)
 
 # Examples
 
