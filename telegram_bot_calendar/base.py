@@ -147,7 +147,7 @@ class TelegramCalendar:
 
 
 def rows(buttons, row_size):
-    return [buttons[i:i + row_size] for i in range(0, len(buttons) - row_size + 1, row_size)]
+    return [buttons[i:i + row_size] for i in range(0, max(len(buttons) - row_size, 0) + 1, row_size)]
 
 
 def max_date(d, step):
