@@ -1,6 +1,7 @@
 # python-telegram-bot-calendar
 
 [![PyPI version](https://badge.fury.io/py/python-telegram-bot-calendar.svg)](https://badge.fury.io/py/python-telegram-bot-calendar)
+[![CodeFactor](https://www.codefactor.io/repository/github/artembakhanov/python-telegram-bot-calendar/badge)](https://www.codefactor.io/repository/github/artembakhanov/python-telegram-bot-calendar)
 
 Very simple inline calendar for your bot.
 
