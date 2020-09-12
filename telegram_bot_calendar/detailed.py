@@ -16,7 +16,7 @@ class DetailedTelegramCalendar(TelegramCalendar):
                  max_date=None, **kwargs):
         super(DetailedTelegramCalendar, self).__init__(calendar_id, current_date=current_date,
                                                        additional_buttons=additional_buttons, locale=locale,
-                                                       min_date=min_date, max_date=max_date)
+                                                       min_date=min_date, max_date=max_date, **kwargs)
 
     def _build(self, step=None, **kwargs):
         if not step:
@@ -24,19 +24,21 @@ class DetailedTelegramCalendar(TelegramCalendar):
 
         self.step = step
         if step == YEAR:
-            self._build_years()
+            self._build_years(**kwargs)
         elif step == MONTH:
-            self._build_months()
+            self._build_months(**kwargs)
         elif step == DAY:
-            self._build_days()
+            self._build_days(**kwargs)
 
     def _process(self, call_data, *args, **kwargs):
-        params = call_data.split("_")
+        params = call_data.split("#")
         params = dict(
-            zip(["start", "calendar_id", "action", "step", "year", "month", "day"][:len(params)], params))
+            zip(["start", "calendar_id", "action",
+                 "step", "year", "month", "day",
+                 *kwargs.keys()][:len(params)], params))
 
         if params['action'] == NOTHING:
-            return None, None, None
+            return None, None, None, None
         step = params['step']
 
         year = int(params['year'])
@@ -44,15 +46,19 @@ class DetailedTelegramCalendar(TelegramCalendar):
         day = int(params['day'])
         self.current_date = date(year, month, day)
 
+        kwargs_dict = {dict_item: params[dict_item] for dict_item in kwargs.keys()}
+
         if params['action'] == GOTO:
-            self._build(step=step)
+            self._build(step=step, **kwargs)
             return None, self._keyboard, step
 
         if params['action'] == SELECT:
             if step in STEPS:
-                self._build(step=STEPS[step])
+                self._build(step=STEPS[step], **kwargs)
                 return None, self._keyboard, STEPS[step]
             else:
+                if kwargs:
+                    return [self.current_date, kwargs_dict], None, step
                 return self.current_date, None, step
 
     def _build_years(self, *args, **kwargs):
@@ -63,15 +69,17 @@ class DetailedTelegramCalendar(TelegramCalendar):
         years_buttons = rows(
             [
                 self._build_button(d.year if d else self.empty_year_button, SELECT if d else NOTHING, YEAR, d,
-                                   is_random=True)
+                                   is_random=True, **kwargs)
                 for d in years
             ],
             self.size_year
         )
 
-        nav_buttons = self._build_nav_buttons(YEAR, diff=relativedelta(years=years_num),
-                                              mind=max_date(start, YEAR),
-                                              maxd=min_date(start + relativedelta(years=years_num - 1), YEAR))
+        nav_buttons = self._build_nav_buttons(
+            YEAR, diff=relativedelta(years=years_num),
+            mind=max_date(start, YEAR),
+            maxd=min_date(start + relativedelta(years=years_num - 1), YEAR),
+            **kwargs)
 
         self._keyboard = self._build_keyboard(years_buttons + nav_buttons)
 
@@ -83,7 +91,8 @@ class DetailedTelegramCalendar(TelegramCalendar):
                 self._build_button(
                     self.months[self.locale][d.month - 1] if d else self.empty_month_button,  # button text
                     SELECT if d else NOTHING,  # action
-                    MONTH, d, is_random=True  # other parameters
+                    MONTH, d, is_random=True,  # other parameters
+                    **kwargs
                 )
                 for d in months
             ],
@@ -91,7 +100,8 @@ class DetailedTelegramCalendar(TelegramCalendar):
 
         nav_buttons = self._build_nav_buttons(MONTH, diff=relativedelta(months=12),
                                               mind=max_date(start, MONTH),
-                                              maxd=min_date(start.replace(month=12), MONTH))
+                                              maxd=min_date(start.replace(month=12), MONTH),
+                                              **kwargs)
 
         self._keyboard = self._build_keyboard(months_buttons + nav_buttons)
 
@@ -104,21 +114,23 @@ class DetailedTelegramCalendar(TelegramCalendar):
         days_buttons = rows(
             [
                 self._build_button(d.day if d else self.empty_day_button, SELECT if d else NOTHING, DAY, d,
-                                   is_random=True)
+                                   is_random=True, **kwargs)
                 for d in days
             ],
             self.size_day
         )
 
         days_of_week_buttons = [[
-            self._build_button(self.days_of_week[self.locale][i], NOTHING) for i in range(7)
+            self._build_button(self.days_of_week[self.locale][i], NOTHING, **kwargs) for i in range(7)
         ]]
 
         # mind and maxd are swapped since we need maximum and minimum days in the month
         # without swapping next page can generated incorrectly
-        nav_buttons = self._build_nav_buttons(DAY, diff=relativedelta(months=1),
-                                              maxd=max_date(start, MONTH),
-                                              mind=min_date(start + relativedelta(days=days_num - 1), MONTH))
+        nav_buttons = self._build_nav_buttons(
+            DAY, diff=relativedelta(months=1),
+            maxd=max_date(start, MONTH),
+            mind=min_date(start + relativedelta(days=days_num - 1), MONTH),
+            **kwargs)
 
         self._keyboard = self._build_keyboard(days_of_week_buttons + days_buttons + nav_buttons)
 
@@ -137,11 +149,14 @@ class DetailedTelegramCalendar(TelegramCalendar):
 
         return [[
             self._build_button(text[0].format(**data) if prev_exists else self.empty_nav_button,
-                               GOTO if prev_exists else NOTHING, step, prev_page, is_random=True),
+                               GOTO if prev_exists else NOTHING, step, prev_page, is_random=True,
+                               **kwargs),
             self._build_button(text[1].format(**data),
-                               PREV_ACTIONS[step], PREV_STEPS[step], self.current_date, is_random=True),
+                               PREV_ACTIONS[step], PREV_STEPS[step], self.current_date, is_random=True,
+                               **kwargs),
             self._build_button(text[2].format(**data) if next_exists else self.empty_nav_button,
-                               GOTO if next_exists else NOTHING, step, next_page, is_random=True),
+                               GOTO if next_exists else NOTHING, step, next_page, is_random=True,
+                               **kwargs),
         ]]
 
     def _get_period(self, step, start, diff, *args, **kwargs):

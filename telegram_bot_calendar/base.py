@@ -78,18 +78,18 @@ class TelegramCalendar:
     @staticmethod
     def func(calendar_id=0):
         def inn(callback):
-            start = CB_CALENDAR + "_" + str(calendar_id)
+            start = CB_CALENDAR + "#" + str(calendar_id)
             return callback.data.startswith(start)
 
         return inn
 
-    def build(self):
+    def build(self, **kwargs):
         if not self._keyboard:
-            self._build()
+            self._build(**kwargs)
         return self._keyboard, self.step
 
-    def process(self, call_data):
-        return self._process(call_data)
+    def process(self, call_data, **kwargs):
+        return self._process(call_data, **kwargs)
 
     def _build(self, *args, **kwargs):
         """
@@ -107,19 +107,19 @@ class TelegramCalendar:
             params = [CB_CALENDAR, str(self.calendar_id), action]
         else:
             data = list(map(str, data.timetuple()[:3]))
-            params = [CB_CALENDAR, str(self.calendar_id), action, step] + data
+            params = [CB_CALENDAR, str(self.calendar_id), action, step] + data + [*kwargs.values()]
 
         # Random is used here to protect bots from being spammed by some 'smart' users.
         # Random callback data will not produce api errors "Message is not modified".
         # However, there is still a chance (1 in 1e18) that the same callbacks are created.
-        salt = "_" + str(random.randint(1, 1e18)) if is_random else ""
+        salt = "#" + str(random.randint(1, 1e18)) if is_random else ""
 
-        return "_".join(params) + salt
+        return "#".join(params) + salt
 
     def _build_button(self, text, action, step=None, data=None, is_random=False, **kwargs):
         return {
             'text': text,
-            'callback_data': self._build_callback(action, step, data, is_random=is_random)
+            'callback_data': self._build_callback(action, step, data, is_random=is_random, **kwargs)
         }
 
     def _build_keyboard(self, buttons):
