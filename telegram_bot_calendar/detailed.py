@@ -38,7 +38,7 @@ class DetailedTelegramCalendar(TelegramCalendar):
                  *kwargs.keys()][:len(params)], params))
 
         if params['action'] == NOTHING:
-            return None, None, None, None
+            return None, None, None
         step = params['step']
 
         year = int(params['year'])
