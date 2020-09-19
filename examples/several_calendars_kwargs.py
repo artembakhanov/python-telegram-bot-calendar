@@ -33,7 +33,7 @@ def select_another_date(m, date):
 
 @bot.callback_query_handler(func=WMonthTelegramCalendar.func(calendar_id=1))
 def cal1(c):
-    result, key, step = WMonthTelegramCalendar().process(c.data)
+    result, key, step = WMonthTelegramCalendar(calendar_id=1).process(c.data)
     if not result and key:
         bot.edit_message_text(f"Select {LSTEP[step]}",
                               c.message.chat.id,
@@ -44,12 +44,12 @@ def cal1(c):
                               c.message.chat.id,
                               c.message.message_id)
 
-    select_another_date(c.message, str(result))
+        select_another_date(c.message, str(result))
 
 
 @bot.callback_query_handler(func=WMonthTelegramCalendar().func(calendar_id=2))
 def cal2(c):
-    result, key, step = WMonthTelegramCalendar().process(c.data, some_date='')
+    result, key, step = WMonthTelegramCalendar(calendar_id=2).process(c.data, some_date='')
     if not result and key:
         bot.edit_message_text(f"Select {LSTEP[step]}",
                               c.message.chat.id,

@@ -1,6 +1,7 @@
 import calendar
 import json
 import random
+from itertools import chain
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
@@ -84,6 +85,8 @@ class TelegramCalendar:
         return inn
 
     def build(self, **kwargs):
+        if len(list(chain.from_iterable(kwargs.values()))) > 22:
+            raise Exception("Too long string passed in value of kwargs or too many values")
         if not self._keyboard:
             self._build(**kwargs)
         return self._keyboard, self.step
