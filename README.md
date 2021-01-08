@@ -59,7 +59,7 @@ As you can see, special function that is provided should be passed to callback q
 
 In the body of the handler function you need to call process function on callback data. **WARNING!** You need to create the calendar object again if it was not saved before.
 
-The function `process` return tuple of size 3 - `result`, `keyboard`, `step`. 
+The function `process` return tuple of size 3 - `result`, `keyboard`, `step`.
 
 * `result` - `datetime.date` object if user finished selecting. Otherwise `None`
 * `keyboard` - inline keyboard markup if the result is not ready. Otherwise `None`
@@ -80,7 +80,7 @@ In the class constructor `min_date` and `max_date` - both are used as min and ma
 
 You can also write your own code. One of the examples is redefining the steps order.
 
-In the package you can find `WMonthTelegramCalendar` and `WYearTelegramCalendar` that start from day and month selecting, not from year. 
+In the package you can find `WMonthTelegramCalendar` and `WYearTelegramCalendar` that start from day and month selecting, not from year.
 
 You can also redefine style parameters. Example:
 
@@ -117,6 +117,7 @@ class MyTranslationCalendar(DetailedTelegramCalendar):
 
 * [simple_pytelegrambotapi.py](/examples/simple_pytelegrambotapi.py) - simple example with [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI)
 * [simple_aiogram.py](/examples/simple_aiogram.py) - simple example with [aiogram](https://github.com/aiogram/aiogram)
+* [simple_telethon.py](/examples/simple_telethon.py) - simple example with [telethon](https://github.com/LonamiWebs/Telethon)
 * [custom_translation.py](examples/custom_translation.py) - custom translation of calendar
 * [date_ranges.py](/examples/date_ranges.py) - define date ranges for the bot
 * [redefine_style.py](/examples/redefine_style.py) - simple example of redefining styles
