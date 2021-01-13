@@ -129,6 +129,10 @@ class TelegramCalendar:
         return self.min_date <= d <= self.max_date
 
     def _get_period(self, step, start, diff, *args, **kwargs):
+        """
+        Used for getting period of dates with a given step, start date and difference.
+        It allows to create empty dates if they are not in the given range.
+        """
         lstep = LSTEP[step] + "s"
         dates = []
 
@@ -147,10 +151,21 @@ class TelegramCalendar:
 
 
 def rows(buttons, row_size):
+    """
+    Build rows for the keyboard. Divides list of buttons to list of lists of buttons.
+
+    """
     return [buttons[i:i + row_size] for i in range(0, max(len(buttons) - row_size, 0) + 1, row_size)]
 
 
 def max_date(d, step):
+    """
+    Returns the "biggest" possible date for a given step.
+    It is used for navigations buttons when it is needed to check if prev/next page exists.
+
+    :param d datetime
+    :param step current step
+    """
     if step == YEAR:
         return d.replace(month=12, day=31)
     elif step == MONTH:
