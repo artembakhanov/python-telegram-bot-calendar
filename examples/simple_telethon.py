@@ -2,12 +2,9 @@
 Example using telethon.
 """
 
-from telethon import Button, TelegramClient, events
-import telegram_bot_calendar.base
-from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
+from telethon import TelegramClient, events
 
-import json
-from typing import List, Dict, Callable
+from telegram_bot_calendar import DetailedTelegramCalendar, LSTEP
 
 api_id = 123456
 api_hash = "1233456789"
