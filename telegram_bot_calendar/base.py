@@ -5,6 +5,13 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
+try:
+    from telethon import Button
+
+    TELETHON_INSTALLED = True
+except ImportError:
+    TELETHON_INSTALLED = False
+
 from telegram_bot_calendar.static import MONTHS, DAYS_OF_WEEK
 
 calendar.setfirstweekday(calendar.MONDAY)
@@ -42,12 +49,13 @@ class TelegramCalendar:
     step = None
 
     def __init__(self, calendar_id=0, current_date=None, additional_buttons=None, locale='en', min_date=None,
-                 max_date=None, **kwargs):
+                 max_date=None, telethon=False, **kwargs):
         """
 
         :param date current_date: Where calendar starts, if None the current date is used
         :param view: The type of the calendar: either detailed, w/month, or w/year
         """
+
         if current_date is None: current_date = date.today()
         if min_date is None: min_date = date(1, 1, 1)
         if max_date is None: max_date = date(2999, 12, 31)
@@ -58,6 +66,11 @@ class TelegramCalendar:
 
         self.min_date = min_date
         self.max_date = max_date
+
+        self.telethon = telethon
+        if self.telethon and not TELETHON_INSTALLED:
+            raise ImportError(
+                "Telethon is not installed. Please install telethon or use pip install python-telegram-bot-calendar[telethon]")
 
         if not additional_buttons: additional_buttons = []
         self.additional_buttons = rows(additional_buttons, self.size_additional_buttons)
@@ -76,10 +89,10 @@ class TelegramCalendar:
         }
 
     @staticmethod
-    def func(calendar_id=0):
+    def func(calendar_id=0, telethon=False):
         def inn(callback):
             start = CB_CALENDAR + "_" + str(calendar_id)
-            return callback.data.startswith(start)
+            return callback.decode("utf-8").startswith(start) if telethon else callback.data.startswith(start)
 
         return inn
 
@@ -117,12 +130,23 @@ class TelegramCalendar:
         return "_".join(params) + salt
 
     def _build_button(self, text, action, step=None, data=None, is_random=False, **kwargs):
-        return {
-            'text': text,
-            'callback_data': self._build_callback(action, step, data, is_random=is_random)
-        }
+        if self.telethon:
+            return Button.inline(text=str(text), data=self._build_callback(action, step, data, is_random=is_random))
+        else:
+            return {
+                'text': text,
+                'callback_data': self._build_callback(action, step, data, is_random=is_random)
+            }
 
     def _build_keyboard(self, buttons):
+        if self.telethon:
+            return buttons
+        return self._build_json_keyboard(buttons)
+
+    def _build_json_keyboard(self, buttons):
+        """
+        Build keyboard in json to send to Telegram API over HTTP.
+        """
         return json.dumps({"inline_keyboard": buttons + self.additional_buttons})
 
     def _valid_date(self, d):
