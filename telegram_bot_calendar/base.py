@@ -72,7 +72,7 @@ class TelegramCalendar:
             raise ImportError(
                 "Telethon is not installed. Please install telethon or use pip install python-telegram-bot-calendar[telethon]")
         # whether to add random numbers to callbacks
-        self.is_random = True
+        self.is_random = is_random
 
         if not additional_buttons: additional_buttons = []
         self.additional_buttons = rows(additional_buttons, self.size_additional_buttons)
