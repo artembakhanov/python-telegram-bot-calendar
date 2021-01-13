@@ -16,7 +16,7 @@ class DetailedTelegramCalendar(TelegramCalendar):
                  max_date=None, telethon=False, **kwargs):
         super(DetailedTelegramCalendar, self).__init__(calendar_id, current_date=current_date,
                                                        additional_buttons=additional_buttons, locale=locale,
-                                                       min_date=min_date, max_date=max_date, is_random=is_random, telethon=telethon, **kwargs)
+                                                       min_date=min_date, max_date=max_date, is_random=False, telethon=telethon, **kwargs)
 
     def _build(self, step=None, **kwargs):
         if not step:
