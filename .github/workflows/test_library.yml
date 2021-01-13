@@ -1,4 +1,4 @@
-name: testing python-telegram-bot-calendar
+name: Tests
 
 on: [push]
 
