@@ -42,7 +42,7 @@ class TelegramCalendar:
     step = None
 
     def __init__(self, calendar_id=0, current_date=None, additional_buttons=None, locale='en', min_date=None,
-                 max_date=None, **kwargs):
+                 max_date=None, is_random=True, **kwargs):
         """
 
         :param date current_date: Where calendar starts, if None the current date is used
@@ -58,6 +58,9 @@ class TelegramCalendar:
 
         self.min_date = min_date
         self.max_date = max_date
+
+        # whether to add random numbers to callbacks
+        self.is_random = True
 
         if not additional_buttons: additional_buttons = []
         self.additional_buttons = rows(additional_buttons, self.size_additional_buttons)
