@@ -6,7 +6,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 setup(
     name='python-telegram-bot-calendar',
     packages=['telegram_bot_calendar'],
-    version='1.0.4',
+    version='1.0.5',
     license='MIT',
     description='Python inline calendar for telegram bots',
     long_description=long_description,
@@ -19,6 +19,9 @@ setup(
     install_requires=[
         'python-dateutil',
     ],
+    extras_require={
+        'telethon': ['telethon']
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
