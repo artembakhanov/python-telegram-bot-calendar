@@ -16,7 +16,7 @@ class DetailedTelegramCalendar(TelegramCalendar):
                  max_date=None, telethon=False, **kwargs):
         super(DetailedTelegramCalendar, self).__init__(calendar_id, current_date=current_date,
                                                        additional_buttons=additional_buttons, locale=locale,
-                                                       min_date=min_date, max_date=max_date, telethon=telethon, **kwargs)
+                                                       min_date=min_date, max_date=max_date, is_random=is_random, telethon=telethon, **kwargs)
 
     def _build(self, step=None, **kwargs):
         if not step:
@@ -63,7 +63,7 @@ class DetailedTelegramCalendar(TelegramCalendar):
         years_buttons = rows(
             [
                 self._build_button(d.year if d else self.empty_year_button, SELECT if d else NOTHING, YEAR, d,
-                                   is_random=True)
+                                   is_random=self.is_random)
                 for d in years
             ],
             self.size_year
@@ -83,7 +83,7 @@ class DetailedTelegramCalendar(TelegramCalendar):
                 self._build_button(
                     self.months[self.locale][d.month - 1] if d else self.empty_month_button,  # button text
                     SELECT if d else NOTHING,  # action
-                    MONTH, d, is_random=True  # other parameters
+                    MONTH, d, is_random=self.is_random  # other parameters
                 )
                 for d in months
             ],
@@ -104,7 +104,7 @@ class DetailedTelegramCalendar(TelegramCalendar):
         days_buttons = rows(
             [
                 self._build_button(d.day if d else self.empty_day_button, SELECT if d else NOTHING, DAY, d,
-                                   is_random=True)
+                                   is_random=self.is_random)
                 for d in days
             ],
             self.size_day
@@ -137,11 +137,11 @@ class DetailedTelegramCalendar(TelegramCalendar):
 
         return [[
             self._build_button(text[0].format(**data) if prev_exists else self.empty_nav_button,
-                               GOTO if prev_exists else NOTHING, step, prev_page, is_random=True),
+                               GOTO if prev_exists else NOTHING, step, prev_page, is_random=self.is_random),
             self._build_button(text[1].format(**data),
-                               PREV_ACTIONS[step], PREV_STEPS[step], self.current_date, is_random=True),
+                               PREV_ACTIONS[step], PREV_STEPS[step], self.current_date, is_random=self.is_random),
             self._build_button(text[2].format(**data) if next_exists else self.empty_nav_button,
-                               GOTO if next_exists else NOTHING, step, next_page, is_random=True),
+                               GOTO if next_exists else NOTHING, step, next_page, is_random=self.is_random),
         ]]
 
     def _get_period(self, step, start, diff, *args, **kwargs):
