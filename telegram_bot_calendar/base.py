@@ -6,6 +6,13 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 
 try:
+    from pyrogram.types import (InlineKeyboardButton, InlineKeyboardMarkup)
+
+    PYROGRAM_INSTALLED = True
+except ImportError:
+    PYROGRAM_INSTALLED = False
+    
+try:
     from telethon import Button
 
     TELETHON_INSTALLED = True
@@ -49,7 +56,7 @@ class TelegramCalendar:
     step = None
 
     def __init__(self, calendar_id=0, current_date=None, additional_buttons=None, locale='en', min_date=None,
-                 max_date=None, telethon=False, is_random=True, **kwargs):
+                 max_date=None, telethon=False, pyrogram=False, is_random=True, **kwargs):
         """
 
         :param date current_date: Where calendar starts, if None the current date is used
@@ -68,6 +75,10 @@ class TelegramCalendar:
         self.max_date = max_date
 
         self.telethon = telethon
+        self.pyrogram = pyrogram
+        if self.pyrogram and not PYROGRAM_INSTALLED:
+            raise ImportError(
+                "Pyrogram is not installed. Please install pyrogram")
         if self.telethon and not TELETHON_INSTALLED:
             raise ImportError(
                 "Telethon is not installed. Please install telethon or use pip install python-telegram-bot-calendar[telethon]")
@@ -91,10 +102,15 @@ class TelegramCalendar:
         }
 
     @staticmethod
-    def func(calendar_id=0, telethon=False):
-        def inn(callback):
-            start = CB_CALENDAR + "_" + str(calendar_id)
-            return callback.decode("utf-8").startswith(start) if telethon else callback.data.startswith(start)
+    def func(calendar_id=0, telethon=False, pyrogram=False):
+        if pyrogram:
+             def inn(client, callback):
+                start = CB_CALENDAR + "_" + str(calendar_id)
+                return client, callback.data.startswith(start)
+        else:
+            def inn(callback):
+                start = CB_CALENDAR + "_" + str(calendar_id)
+                return callback.decode("utf-8").startswith(start) if telethon else callback.data.startswith(start)
 
         return inn
 
@@ -134,15 +150,18 @@ class TelegramCalendar:
     def _build_button(self, text, action, step=None, data=None, is_random=False, **kwargs):
         if self.telethon:
             return Button.inline(text=str(text), data=self._build_callback(action, step, data, is_random=is_random))
-        else:
-            return {
-                'text': text,
-                'callback_data': self._build_callback(action, step, data, is_random=is_random)
-            }
+        if self.pyrogram:
+            return InlineKeyboardButton(str(text), callback_data=self._build_callback(action, step, data, is_random=is_random))
+        return {
+            'text': text,
+            'callback_data': self._build_callback(action, step, data, is_random=is_random)
+        }
 
     def _build_keyboard(self, buttons):
         if self.telethon:
             return buttons
+        if self.pyrogram:
+            return InlineKeyboardMarkup(buttons)
         return self._build_json_keyboard(buttons)
 
     def _build_json_keyboard(self, buttons):
