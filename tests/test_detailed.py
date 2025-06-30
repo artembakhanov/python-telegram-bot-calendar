@@ -62,3 +62,17 @@ def test__build_nav_buttons(step, start, diff, mind, maxd, min_button_date, max_
             result = False
 
     assert result
+
+
+def test_korean_locale_texts():
+    calendar = DetailedTelegramCalendar(locale='ko', current_date=date(2021, 1, 12))
+
+    calendar._build_months()
+    months_keyboard = json.loads(calendar._keyboard)
+    assert months_keyboard['inline_keyboard'][0][0]['text'] == '1월'
+    assert months_keyboard['inline_keyboard'][3][2]['text'] == '12월'
+
+    calendar._build_days()
+    days_keyboard = json.loads(calendar._keyboard)
+    days_row = [btn['text'] for btn in days_keyboard['inline_keyboard'][0]]
+    assert days_row == ['월', '화', '수', '목', '금', '토', '일']
