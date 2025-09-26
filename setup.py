@@ -18,6 +18,7 @@ setup(
     keywords=['calendar', 'telegram', 'bot', 'telegram bot'],
     install_requires=[
         'python-dateutil',
+        'jdatetime',
     ],
     extras_require={
         'telethon': ['telethon']

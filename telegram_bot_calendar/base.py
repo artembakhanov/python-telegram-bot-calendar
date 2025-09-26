@@ -3,6 +3,7 @@ import json
 import random
 from datetime import date
 
+import jdatetime
 from dateutil.relativedelta import relativedelta
 
 try:
@@ -13,8 +14,6 @@ except ImportError:
     TELETHON_INSTALLED = False
 
 from telegram_bot_calendar.static import MONTHS, DAYS_OF_WEEK
-
-calendar.setfirstweekday(calendar.MONDAY)
 
 CB_CALENDAR = "cbcal"
 
@@ -56,16 +55,22 @@ class TelegramCalendar:
         :param view: The type of the calendar: either detailed, w/month, or w/year
         """
 
-        if current_date is None: current_date = date.today()
-        if min_date is None: min_date = date(1, 1, 1)
-        if max_date is None: max_date = date(2999, 12, 31)
+        self.locale = locale
+        self.use_jdate = True if locale == 'fa' else False
+
+        if self.use_jdate:
+            if current_date is None: current_date = jdatetime.date.today()
+            if min_date is None: min_date = jdatetime.date(1300, 1, 1)
+            if max_date is None: max_date = jdatetime.date(1499, 12, 29)
+        else:
+            if current_date is None: current_date = date.today()
+            if min_date is None: min_date = date(1800, 1, 1)
+            if max_date is None: max_date = date(2999, 12, 31)
+        self.min_date = min_date
+        self.max_date = max_date
 
         self.calendar_id = calendar_id
         self.current_date = current_date
-        self.locale = locale
-
-        self.min_date = min_date
-        self.max_date = max_date
 
         self.telethon = telethon
         if self.telethon and not TELETHON_INSTALLED:
@@ -131,14 +136,23 @@ class TelegramCalendar:
 
         return "_".join(params) + salt
 
-    def _build_button(self, text, action, step=None, data=None, is_random=False, **kwargs):
-        if self.telethon:
-            return Button.inline(text=str(text), data=self._build_callback(action, step, data, is_random=is_random))
-        else:
-            return {
-                'text': text,
-                'callback_data': self._build_callback(action, step, data, is_random=is_random)
-            }
+    def _build_button(self, text, action, step=None, date_obj=None, is_random=False, *args, **kwargs):
+        """Build individual calendar button with debug info"""
+        if (action == NOTHING) or (not date_obj):
+            return {"text": text, "callback_data": NOTHING}
+
+        callback_data = "_".join([
+            "CALENDAR",
+            str(self.calendar_id),
+            str(int(self.use_jdate)),
+            action,
+            step if step else "",
+            str(date_obj.year),
+            str(date_obj.month),
+            str(date_obj.day)
+        ])
+
+        return {"text": text, "callback_data": callback_data}
 
     def _build_keyboard(self, buttons):
         if self.telethon:
@@ -151,30 +165,46 @@ class TelegramCalendar:
         """
         return json.dumps({"inline_keyboard": buttons + self.additional_buttons})
 
-    def _valid_date(self, d):
-        return self.min_date <= d <= self.max_date
+    def _valid_date(self, date_obj):
+        """Check if date is valid considering min_date and max_date constraints"""
+        if date_obj is None:
+            return False
 
-    def _get_period(self, step, start, diff, *args, **kwargs):
-        """
-        Used for getting period of dates with a given step, start date and difference.
-        It allows to create empty dates if they are not in the given range.
-        """
-        lstep = LSTEP[step] + "s"
-        dates = []
+        if self.min_date and date_obj < self.min_date:
+            return False
 
-        empty_before = 0
-        empty_after = 0
+        if self.max_date and date_obj > self.max_date:
+            return False
 
-        for i in range(diff):
-            n_date = start + relativedelta(**{lstep: i})
-            if self.min_date > max_date(n_date, step):
-                empty_before += 1
-            elif self.max_date < min_date(n_date, step):
-                empty_after += 1
+        return True
+    def _get_period(self, step, start, count):
+        """Override _get_period to handle Jalali dates correctly"""
+
+        result = []
+        for i in range(count):
+            if step == YEAR:
+                if self.use_jdate:
+                    current = jdatetime.date(start.year + i, 1, 1)
+                else:
+                    current = date(start.year + i, 1, 1)
+            elif step == MONTH:
+                year = start.year + (start.month + i - 1) // 12
+                month = (start.month + i - 1) % 12 + 1
+                current = jdatetime.date(year, month, 1) if self.use_jdate else date(year, month, 1)
+            else:  # DAY
+                if self.use_jdate:
+                    cur_tmp = start.togregorian() + relativedelta(days=i)
+                    current = jdatetime.date.fromgregorian(date=cur_tmp)
+                else:
+                    current = start + relativedelta(days=i)
+
+            # Validate the date
+            if self._valid_date(current):
+                result.append(current)
             else:
-                dates.append(n_date)
-        return [None] * empty_before + dates + [None] * empty_after
+                result.append(None)
 
+        return result
 
 def rows(buttons, row_size):
     """
@@ -192,6 +222,20 @@ def max_date(d, step):
     :param d datetime
     :param step current step
     """
+    if isinstance(d, jdatetime.date):
+        if step == YEAR:
+            days = 29
+            if jdatetime.date(d.year, 1, 1).isleap():
+                days = 30
+            return d.replace(month=12, day=days)
+        elif step == MONTH:
+            days = jdatetime.j_days_in_month[d.month-1]
+            if d.month == 12 and d.isleap():
+                days += 1
+            return d.replace(day=days)
+        else:
+            return d
+
     if step == YEAR:
         return d.replace(month=12, day=31)
     elif step == MONTH:
